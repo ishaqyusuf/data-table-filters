@@ -29,6 +29,7 @@ import {
 } from "./utils";
 import { formatDistanceToNow } from "date-fns";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { SEPARATOR } from "@/app/infinite/constants";
 
 // FIXME: there is an issue on cmdk if I wanna only set a single slider value...
 
@@ -65,6 +66,10 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
   useEffect(() => {
     // TODO: we could check for ARRAY_DELIMITER or SLIDER_DELIMITER to auto-set filter when typing
+    console.log({
+      inputValue,
+      currentWord,
+    });
     if (currentWord !== "" && open) return;
     // reset
     if (currentWord !== "" && !open) setCurrentWord("");
@@ -73,11 +78,13 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
     // FIXME: that stuff is BAD!
     const searchParams = deserialize(schema)(inputValue);
+    console.log({ searchParams });
     const currentFilters = table.getState().columnFilters;
     const currentEnabledFilters = currentFilters.filter((filter) => {
       const field = _filterFields?.find((field) => field.value === filter.id);
       return !field?.commandDisabled;
     });
+
     const currentDisabledFilters = currentFilters.filter((filter) => {
       const field = _filterFields?.find((field) => field.value === filter.id);
       return field?.commandDisabled;
@@ -92,8 +99,12 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
     );
 
     if (searchParams.success) {
+      console.log("..");
+      // return;
       for (const key of Object.keys(searchParams.data)) {
         const value = searchParams.data[key as keyof typeof searchParams.data];
+        console.log({ key, value });
+
         table.getColumn(key)?.setFilterValue(value);
       }
       const currentFiltersToReset = currentEnabledFilters.filter((filter) => {
@@ -254,39 +265,79 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
                   const options = getFieldOptions({ field });
 
-                  return options.map((optionValue) => {
-                    return (
-                      <CommandItem
-                        key={`${String(field.value)}:${optionValue}`}
-                        value={`${String(field.value)}:${optionValue}`}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onSelect={(value) => {
-                          setInputValue((prev) =>
-                            replaceInputByFieldType({
-                              prev,
-                              currentWord,
-                              optionValue,
-                              value,
-                              field,
-                            })
-                          );
-                          setCurrentWord("");
-                        }}
-                      >
-                        {`${optionValue}`}
-                        {facetedValue?.has(optionValue) ? (
-                          <span className="ml-auto font-mono text-muted-foreground">
-                            {facetedValue?.get(optionValue)}
-                          </span>
-                        ) : null}
-                      </CommandItem>
-                    );
-                  });
+                  // Track if the current word exists in the options
+                  const optionExists = options.some(
+                    (optionValue) =>
+                      `${(field as any).value}:${optionValue}` === currentWord
+                  );
+
+                  return (
+                    <>
+                      {!optionExists && currentWord.trim() !== "" && (
+                        <CommandItem
+                          key={`${currentWord}`}
+                          value={currentWord}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                          onSelect={(value) => {
+                            setInputValue((prev) => {
+                              const input = `${value}${SEPARATOR}`;
+                              console.log({ input });
+
+                              return prev.includes(input)
+                                ? prev
+                                : `${prev}${SEPARATOR}`.trim();
+                            });
+                            setCurrentWord("");
+                            // Optionally, you can add logic here to handle adding this new option to the options array if needed
+                          }}
+                        >
+                          Press Enter to create {'"'}
+                          {currentWord}
+                          {'"'}
+                        </CommandItem>
+                      )}
+                      {/* Render existing options */}
+                      {options.map((optionValue) => {
+                        return (
+                          <CommandItem
+                            key={`${String(field.value)}:${optionValue}`}
+                            value={`${String(field.value)}:${optionValue}`}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onSelect={(value) => {
+                              setInputValue((prev) =>
+                                replaceInputByFieldType({
+                                  prev,
+                                  currentWord,
+                                  optionValue,
+                                  value,
+                                  field,
+                                })
+                              );
+                              setCurrentWord("");
+                            }}
+                          >
+                            {`${optionValue}`}
+                            {facetedValue?.has(optionValue) ? (
+                              <span className="ml-auto font-mono text-muted-foreground">
+                                {facetedValue?.get(optionValue)}
+                              </span>
+                            ) : null}
+                          </CommandItem>
+                        );
+                      })}
+
+                      {/* Handle "create new" option if typed value does not exist in options */}
+                    </>
+                  );
                 })}
               </CommandGroup>
+
               <CommandSeparator />
               <CommandGroup heading="Suggestions">
                 {lastSearches

@@ -7,13 +7,14 @@ import {
   RANGE_DELIMITER,
   SLIDER_DELIMITER,
 } from "@/lib/delimiters";
+import { SEPARATOR } from "@/app/infinite/constants";
 
 export function deserialize<T extends z.AnyZodObject>(schema: T) {
   const castToSchema = z.preprocess((val) => {
     if (typeof val !== "string") return val;
     return val
       .trim()
-      .split(" ")
+      .split(" &")
       .reduce((prev, curr) => {
         const [name, value] = curr.split(":");
         if (!value || !name) return prev;
@@ -51,16 +52,22 @@ export function serializeColumFilters<TData>(
 
     if (Array.isArray(curr.value)) {
       if (type === "slider") {
-        return `${prev}${curr.id}:${curr.value.join(SLIDER_DELIMITER)} `;
+        return `${prev}${curr.id}:${curr.value.join(
+          SLIDER_DELIMITER
+        )}${SEPARATOR}`;
       }
       if (type === "checkbox") {
-        return `${prev}${curr.id}:${curr.value.join(ARRAY_DELIMITER)} `;
+        return `${prev}${curr.id}:${curr.value.join(
+          ARRAY_DELIMITER
+        )}${SEPARATOR}`;
       }
       if (type === "timerange") {
-        return `${prev}${curr.id}:${curr.value.join(RANGE_DELIMITER)} `;
+        return `${prev}${curr.id}:${curr.value.join(
+          RANGE_DELIMITER
+        )}${SEPARATOR}`;
       }
     }
 
-    return `${prev}${curr.id}:${curr.value} `;
+    return `${prev}${curr.id}:${curr.value}${SEPARATOR}`;
   }, "");
 }

@@ -5,6 +5,7 @@ import {
 } from "@/lib/delimiters";
 import type { DataTableFilterField } from "../types";
 import { isArrayOfDates } from "@/lib/is-array";
+import { SEPARATOR } from "@/app/infinite/constants";
 
 /**
  * Extracts the word from the given string at the specified caret position.
@@ -45,7 +46,7 @@ export function replaceInputByFieldType<TData>({
         const words = currentWord.split(ARRAY_DELIMITER);
         words[words.length - 1] = `${optionValue}`;
         const input = prev.replace(currentWord, words.join(ARRAY_DELIMITER));
-        return `${input.trim()} `;
+        return `${input.trim()}${SEPARATOR}`;
       }
     }
     case "slider": {
@@ -53,7 +54,7 @@ export function replaceInputByFieldType<TData>({
         const words = currentWord.split(SLIDER_DELIMITER);
         words[words.length - 1] = `${optionValue}`;
         const input = prev.replace(currentWord, words.join(SLIDER_DELIMITER));
-        return `${input.trim()} `;
+        return `${input.trim()}${SEPARATOR}`;
       }
     }
     case "timerange": {
@@ -61,12 +62,12 @@ export function replaceInputByFieldType<TData>({
         const words = currentWord.split(RANGE_DELIMITER);
         words[words.length - 1] = `${optionValue}`;
         const input = prev.replace(currentWord, words.join(RANGE_DELIMITER));
-        return `${input.trim()} `;
+        return `${input.trim()}${SEPARATOR}`;
       }
     }
     default: {
       const input = prev.replace(currentWord, value);
-      return `${input.trim()} `;
+      return `${input.trim()}${SEPARATOR}`;
     }
   }
 }

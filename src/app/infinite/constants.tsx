@@ -124,3 +124,5 @@ export const filterFields = [
     options: [{ label: "10", value: 10 }], // REMINDER: this is a placeholder to set the type in the client.tsx
   },
 ] satisfies DataTableFilterField<ColumnSchema>[];
+
+export const SEPARATOR = ` &`;

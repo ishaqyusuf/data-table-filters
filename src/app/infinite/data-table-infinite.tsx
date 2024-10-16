@@ -88,6 +88,7 @@ export function DataTableInfinite<TData, TValue>({
     "data-table-column-order",
     []
   );
+
   const [columnVisibility, setColumnVisibility] =
     useLocalStorage<VisibilityState>("data-table-visibility", {
       uuid: false,
