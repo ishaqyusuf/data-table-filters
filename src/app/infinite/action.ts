@@ -5,8 +5,8 @@ import { searchParamsCache } from "./search-params";
 import { mock } from "./api/mock";
 import { filterData, percentileData, sortData } from "./api/helpers";
 
-export async function __fetch(query: any) {
-  const search = searchParamsCache.parse(query);
+export async function __fetch(search: any) {
+  //   const search = searchParamsCache.parse(query);
   // Simulate a database query
   // await new Promise((resolve) => setTimeout(resolve, 500));
 
