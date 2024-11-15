@@ -3,6 +3,7 @@ import { mock } from "./mock";
 import { searchParamsCache } from "../search-params";
 import { filterData, percentileData, sortData } from "./helpers";
 import { calculateSpecificPercentile } from "@/lib/request/percentile";
+import { __fetch } from "../action";
 
 export async function GET(req: NextRequest) {
   const _search: Map<string, string> = new Map();
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
   // TODO: we could use a POST request to avoid this
   req.nextUrl.searchParams.forEach((value, key) => _search.set(key, value));
   const search = searchParamsCache.parse(Object.fromEntries(_search));
-
+  return Response.json(await __fetch(search));
   // Simulate a database query
   // await new Promise((resolve) => setTimeout(resolve, 500));
 

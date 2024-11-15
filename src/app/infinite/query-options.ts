@@ -17,10 +17,11 @@ export const dataOptions = (search: SearchParamsType, action: any) => {
     queryFn: async ({ pageParam = 0 }) => {
       console.log("QUERYING>>>>>");
       const start = (pageParam as number) * search.size;
-      // const serialize = searchParamsSerializer({ ...search, start });
-      const response = await action({ ...search, start }); //fetch(`/infinite/api${serialize}`);
+      const serialize = searchParamsSerializer({ ...search, start });
+      // const response = await action({ ...search, start });
+      const response = await fetch(`/infinite/api${serialize}`);
       console.log(response);
-      return response as Promise<{
+      return response.json() as Promise<{
         data: ColumnSchema[];
         meta: InfiniteQueryMeta;
       }>;
