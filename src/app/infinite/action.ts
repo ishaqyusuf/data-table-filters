@@ -11,6 +11,9 @@ export async function __fetch(search: any) {
   // Simulate a database query
   // await new Promise((resolve) => setTimeout(resolve, 500));
   unstable_noStore();
+  return await action2(search);
+}
+async function action2(search: any) {
   const totalData = mock;
   const filteredData = filterData(totalData, search);
   const sortedData = sortData(filteredData, search.sort);
