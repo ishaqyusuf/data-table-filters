@@ -20,8 +20,8 @@ export function getWordByCaretPosition({
   let start = caretPosition;
   let end = caretPosition;
 
-  while (start > 0 && value[start - 1] !== " ") start--;
-  while (end < value.length && value[end] !== " ") end++;
+  while (start > 0 && value[start - 1] !== SEPARATOR) start--;
+  while (end < value.length && value[end] !== SEPARATOR) end++;
 
   const word = value.substring(start, end);
   return word;

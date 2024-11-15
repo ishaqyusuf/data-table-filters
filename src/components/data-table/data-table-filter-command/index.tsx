@@ -66,10 +66,7 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
   useEffect(() => {
     // TODO: we could check for ARRAY_DELIMITER or SLIDER_DELIMITER to auto-set filter when typing
-    console.log({
-      inputValue,
-      currentWord,
-    });
+
     if (currentWord !== "" && open) return;
     // reset
     if (currentWord !== "" && !open) setCurrentWord("");
@@ -78,7 +75,7 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
     // FIXME: that stuff is BAD!
     const searchParams = deserialize(schema)(inputValue);
-    console.log({ searchParams });
+
     const currentFilters = table.getState().columnFilters;
     const currentEnabledFilters = currentFilters.filter((filter) => {
       const field = _filterFields?.find((field) => field.value === filter.id);
@@ -98,13 +95,12 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
       {} as Record<string, unknown>
     );
 
-    if (searchParams.success) {
-      console.log("..");
+    if (
+      searchParams.success //&& !inputValue?.endsWith(" ")
+    ) {
       // return;
       for (const key of Object.keys(searchParams.data)) {
         const value = searchParams.data[key as keyof typeof searchParams.data];
-        console.log({ key, value });
-
         table.getColumn(key)?.setFilterValue(value);
       }
       const currentFiltersToReset = currentEnabledFilters.filter((filter) => {
@@ -143,6 +139,10 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
 
   return (
     <div>
+      <div>
+        <p>currentWord:{currentWord}</p>
+        <p>inputValue:{inputValue}</p>
+      </div>
       <button
         type="button"
         className={cn(
@@ -208,6 +208,8 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
             const caretPosition = e.currentTarget?.selectionStart || -1;
             const value = e.currentTarget?.value || "";
             const word = getWordByCaretPosition({ value, caretPosition });
+            console.log({ word });
+
             setCurrentWord(word);
           }}
           placeholder="Search data table..."
@@ -257,8 +259,12 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
               <CommandSeparator />
               <CommandGroup heading="Query">
                 {filterFields?.map((field) => {
-                  if (typeof field.value !== "string") return null;
-                  if (!currentWord.includes(`${field.value}:`)) return null;
+                  if (typeof field.value !== "string") {
+                    return null;
+                  }
+                  if (!currentWord.includes(`${field.value}:`)) {
+                    return null;
+                  }
 
                   const column = table.getColumn(field.value);
                   const facetedValue = column?.getFacetedUniqueValues();
@@ -270,10 +276,10 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
                     (optionValue) =>
                       `${(field as any).value}:${optionValue}` === currentWord
                   );
-
+                  const createWord = currentWord?.split(":")?.reverse()[0];
                   return (
                     <>
-                      {!optionExists && currentWord.trim() !== "" && (
+                      {!optionExists && createWord && (
                         <CommandItem
                           key={`${currentWord}`}
                           value={currentWord}
@@ -284,18 +290,20 @@ export function DataTableFilterCommand<TData, TSchema extends z.AnyZodObject>({
                           onSelect={(value) => {
                             setInputValue((prev) => {
                               const input = `${value}${SEPARATOR}`;
-                              console.log({ input });
 
                               return prev.includes(input)
                                 ? prev
                                 : `${prev}${SEPARATOR}`.trim();
                             });
                             setCurrentWord("");
+                            setTimeout(() => {
+                              setOpen(false);
+                            }, 500);
                             // Optionally, you can add logic here to handle adding this new option to the options array if needed
                           }}
                         >
-                          Press Enter to create {'"'}
-                          {currentWord}
+                          Click Enter to search {'"'}
+                          {createWord}
                           {'"'}
                         </CommandItem>
                       )}

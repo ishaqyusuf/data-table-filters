@@ -120,7 +120,9 @@ export function DataTableInfinite<TData, TValue>({
     observer.observe(topBar);
     return () => observer.unobserve(topBar);
   }, [topBarRef]);
-
+  React.useEffect(() => {
+    console.log(_);
+  }, [_]);
   React.useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -148,6 +150,7 @@ export function DataTableInfinite<TData, TValue>({
       rowSelection,
       columnOrder,
     },
+    manualFiltering: false,
     enableMultiRowSelection: false,
     // @ts-ignore FIXME: because it is not in the types
     getRowId: (row, index) => `${row?.uuid}` || `${index}`,
