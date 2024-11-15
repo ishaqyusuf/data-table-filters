@@ -18,13 +18,14 @@ export const dataOptions = (search: SearchParamsType, action: any) => {
       console.log("QUERYING>>>>>");
       const start = (pageParam as number) * search.size;
       const serialize = searchParamsSerializer({ ...search, start });
-      // const response = await action({ ...search, start });
-      const response = await fetch(`/infinite/api${serialize}`);
-      console.log(response);
-      return response.json() as Promise<{
-        data: ColumnSchema[];
-        meta: InfiniteQueryMeta;
-      }>;
+      const response = await action({ ...search, start });
+      return response;
+      // const response = await fetch(`/infinite/api${serialize}`);
+      // console.log(response);
+      // return response.json() as Promise<{
+      //   data: ColumnSchema[];
+      //   meta: InfiniteQueryMeta;
+      // }>;
     },
     initialPageParam: 0,
     getNextPageParam: (_lastGroup, groups) => groups.length,
