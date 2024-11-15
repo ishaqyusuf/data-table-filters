@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
   return Response.json(await __fetch(search));
   // Simulate a database query
   // await new Promise((resolve) => setTimeout(resolve, 500));
-
   const totalData = mock;
   const filteredData = filterData(totalData, search);
   const sortedData = sortData(filteredData, search.sort);

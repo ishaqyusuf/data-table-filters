@@ -11,6 +11,6 @@ export async function __fetch(search: any) {
   //   const search = searchParamsCache.parse(query);
   // Simulate a database query
   // await new Promise((resolve) => setTimeout(resolve, 500));
-  unstable_noStore();
+  // unstable_noStore();
   return await action2(search);
 }
