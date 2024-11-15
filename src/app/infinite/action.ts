@@ -4,7 +4,7 @@ import { calculateSpecificPercentile } from "@/lib/request/percentile";
 import { searchParamsCache } from "./search-params";
 import { mock } from "./api/mock";
 import { filterData, percentileData, sortData } from "./api/helpers";
-
+export const dynamic = "force-dynamic";
 export async function __fetch(query: any) {
   const search = searchParamsCache.parse(query);
 

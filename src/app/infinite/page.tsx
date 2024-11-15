@@ -4,7 +4,6 @@ import { getQueryClient } from "@/providers/get-query-client";
 import { dataOptions } from "./query-options";
 import { Client } from "./client";
 import { __fetch } from "./action";
-export const dynamic = "force-dynamic";
 export default async function Page({
   searchParams,
 }: {
