@@ -8,11 +8,12 @@ import { useQueryStates } from "nuqs";
 import { searchParamsParser } from "./search-params";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { dataOptions } from "./query-options";
+import { __fetch } from "./action";
 
 export function Client() {
   const [search] = useQueryStates(searchParamsParser);
   const { data, isFetching, isLoading, fetchNextPage } = useInfiniteQuery(
-    dataOptions(search)
+    dataOptions(search, __fetch)
   );
 
   const flatData = React.useMemo(

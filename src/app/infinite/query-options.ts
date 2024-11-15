@@ -11,14 +11,16 @@ export type InfiniteQueryMeta = {
   currentPercentiles: Record<Percentile, number>;
 };
 
-export const dataOptions = (search: SearchParamsType) => {
+export const dataOptions = (search: SearchParamsType, action: any) => {
   return infiniteQueryOptions({
     queryKey: ["data-table", searchParamsSerializer({ ...search, uuid: null })], // remove uuid as it would otherwise retrigger a fetch
     queryFn: async ({ pageParam = 0 }) => {
+      console.log("QUERYING>>>>>");
       const start = (pageParam as number) * search.size;
-      const serialize = searchParamsSerializer({ ...search, start });
-      const response = await fetch(`/infinite/api${serialize}`);
-      return response.json() as Promise<{
+      // const serialize = searchParamsSerializer({ ...search, start });
+      const response = await action({ ...search, start }); //fetch(`/infinite/api${serialize}`);
+      console.log(response);
+      return response as Promise<{
         data: ColumnSchema[];
         meta: InfiniteQueryMeta;
       }>;
