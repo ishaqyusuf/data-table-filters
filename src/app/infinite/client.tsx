@@ -43,14 +43,14 @@ export function Client() {
           field.value === "status"
         ) {
           field.options =
-            totalFilters?.[field.value].map((value) => ({
+            totalFilters?.[field.value].map((value: any) => ({
               label: `${value}`,
               value,
             })) ?? field.options;
         }
         if (field.value === "host" || field.value === "pathname") {
           field.options =
-            totalFilters?.[field.value].map((value) => ({
+            totalFilters?.[field.value].map((value: any) => ({
               label: `${value}`,
               value,
             })) ?? field.options;
